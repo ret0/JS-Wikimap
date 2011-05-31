@@ -1,9 +1,9 @@
-
 <html> 
   <head> 
     <title>Force-Directed Layout</title> 
     <script type="text/javascript" src="/js/protovis-r3.2.js"></script> 
     <script type="text/javascript" src="/js/miserables.js"></script> 
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"></script> 
     <style type="text/css"> 
  
 body {
@@ -13,7 +13,14 @@ body {
     </style> 
   </head> 
   <body> 
-    <script type="text/javascript+protovis"> 
+  <script type="text/javascript+protovis"> 
+
+function transform() {
+    var t = this.transform().invert();
+    $('body').data('foo', t.x);
+    console.info($('body').data('foo'));
+    vis.render();
+}
  
 var w = document.body.clientWidth,
     h = document.body.clientHeight,
@@ -24,11 +31,15 @@ var vis = new pv.Panel()
     .height(h)
     .fillStyle("white")
     .event("mousedown", pv.Behavior.pan())
-    .event("mousewheel", pv.Behavior.zoom());
+    .event("mousewheel", pv.Behavior.zoom())
+    .event("pan", transform)
+    .event("zoom", transform);
  
 var force = vis.add(pv.Layout.Force)
     .nodes(miserables.nodes)
-    .links(miserables.links);
+    .links(miserables.links)
+    .springConstant(0.05)
+    .chargeConstant(-60);
  
 force.link.add(pv.Line);
  
