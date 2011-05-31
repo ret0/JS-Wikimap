@@ -1,0 +1,12 @@
+body {
+      margin: 0;
+}
+
+#frameInfo {
+    position: absolute;
+    top: 70px;
+    left: 200px;
+    padding: 10px;
+    background: white;
+}
+

@@ -1,26 +1,24 @@
-<html> 
-  <head> 
+<html>
+<head> 
+    <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=utf-8" />
     <title>Force-Directed Layout</title> 
     <script type="text/javascript" src="/js/protovis-r3.2.js"></script> 
     <script type="text/javascript" src="/js/miserables.js"></script> 
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"></script> 
-    <style type="text/css"> 
- 
-body {
-  margin: 0;
-}
- 
-    </style> 
-  </head> 
-  <body> 
-  <script type="text/javascript+protovis"> 
+    <link href="/css/base.css" media="all" rel="stylesheet" type="text/css"/>
+</head> 
+
+<body> 
+<script type="text/javascript+protovis"> 
 
 function transform() {
     var t = this.transform().invert();
     $('body').data('currentZoomLevel', t.x);
-    console.info($('body').data('currentZoomLevel'));
     vis.render();
 }
+
+$('body').data('currentZoomLevel', 1);
+ 
  
 var w = document.body.clientWidth,
     h = document.body.clientHeight,
@@ -31,10 +29,11 @@ var vis = new pv.Panel()
     .height(h)
     .fillStyle("white")
     .event("mousedown", pv.Behavior.pan())
-    .event("mousewheel", pv.Behavior.zoom())
+    .event("mousewheel", pv.Behavior.zoom(1))
     .event("pan", transform)
     .event("zoom", transform);
- 
+
+
 var force = vis.add(pv.Layout.Force)
     .nodes(miserables.nodes)
     .links(miserables.links)
@@ -54,30 +53,39 @@ force.node.add(pv.Dot)
 
 force.label.add(pv.Label)
     .bottom(0)
+    .font(function(node) {
+            var fontSize = 12;
+            if (node.linkDegree * 0.5 > 20){
+                fontSize = 20;
+            }
+            else if (node.linkDegree * 0.5 < 12) {
+                fontSize = 12;
+            } else {
+                fontSize = node.linkDegree * 0.5;
+            }
+
+            return fontSize + "px sans-serif";
+        })
     .text(function(node) {
             var zoomLevel = $('body').data('currentZoomLevel');
-            if(zoomLevel > 450) {
-                return node.nodeName;
-            } else {
+            var nodeDegree = node.linkDegree;
+            if (zoomLevel < -250) {
                 return "";
             }
+            if (zoomLevel < 500 && nodeDegree > 50) {
+                return node.nodeName;
+            }
+            if (zoomLevel >= 500) {
+                return node.nodeName;
+            }
+
+            return "";
         });
  
 vis.render();
 
-function mynodes(){
- return miserables.nodes;
-}
-
-function mylinks(){
- return miserables.links;
-}
 
 function addNode(){
-    // The moral of the story here is that you simply operate on
-    // the object containing your nodes/links, call force.links and
-    // force.nodes again; and then call force.reset(). I'm not sure if
-    // the vis.render() is necessary; I'll update this once I find out :)
     miserables.nodes.push({
         "nodeName":"New monkey",
         "group":3
@@ -87,16 +95,12 @@ function addNode(){
         "target":105,
         "value":20
     });
-    force.links(mylinks);
-    force.nodes(mynodes);
+    force.links(miserables.links);
+    force.nodes(miserables.nodes);
     force.reset();
 }
 
 function remNode(){
-    // The moral of the story here is that you simply operate on
-    // the object containing your nodes/links, call force.links and
-    // force.nodes again; and then call force.reset(). I'm not sure if
-    // the vis.render() is necessary; I'll update this once I find out :)
     miserables.nodes.splice(9, 1);
     miserables.links.splice(8, 1);
     force.links(mylinks);
@@ -109,5 +113,7 @@ setTimeout(addNode, 15000);
 //setTimeout(remNode, 10000);
  
     </script> 
+
+    <div id="frameInfo">Frame1</div>
   </body> 
 </html> 
