@@ -17,8 +17,8 @@ body {
 
 function transform() {
     var t = this.transform().invert();
-    $('body').data('foo', t.x);
-    console.info($('body').data('foo'));
+    $('body').data('currentZoomLevel', t.x);
+    console.info($('body').data('currentZoomLevel'));
     vis.render();
 }
  
@@ -51,8 +51,62 @@ force.node.add(pv.Dot)
     .title(function(d) d.nodeName)
     .event("mousedown", pv.Behavior.drag())
     .event("drag", force);
+
+force.label.add(pv.Label)
+    .bottom(0)
+    .text(function(node) {
+            var zoomLevel = $('body').data('currentZoomLevel');
+            if(zoomLevel > 450) {
+                return node.nodeName;
+            } else {
+                return "";
+            }
+        });
  
 vis.render();
+
+function mynodes(){
+ return miserables.nodes;
+}
+
+function mylinks(){
+ return miserables.links;
+}
+
+function addNode(){
+    // The moral of the story here is that you simply operate on
+    // the object containing your nodes/links, call force.links and
+    // force.nodes again; and then call force.reset(). I'm not sure if
+    // the vis.render() is necessary; I'll update this once I find out :)
+    miserables.nodes.push({
+        "nodeName":"New monkey",
+        "group":3
+    });
+    miserables.links.push({
+        "source":0,
+        "target":105,
+        "value":20
+    });
+    force.links(mylinks);
+    force.nodes(mynodes);
+    force.reset();
+}
+
+function remNode(){
+    // The moral of the story here is that you simply operate on
+    // the object containing your nodes/links, call force.links and
+    // force.nodes again; and then call force.reset(). I'm not sure if
+    // the vis.render() is necessary; I'll update this once I find out :)
+    miserables.nodes.splice(9, 1);
+    miserables.links.splice(8, 1);
+    force.links(mylinks);
+    force.nodes(mynodes);
+    force.reset();
+    vis.render();
+}
+
+setTimeout(addNode, 15000);
+//setTimeout(remNode, 10000);
  
     </script> 
   </body> 
