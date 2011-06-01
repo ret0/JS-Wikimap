@@ -1,0 +1,175 @@
+<html>
+<head> 
+    <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=utf-8" />
+    <title>Force-Directed Layout</title> 
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"></script> 
+</head> 
+
+<body> 
+<script type="text/javascript"> 
+
+
+var nodes = [
+{nodeName: "Michael Jackson", group: 1}, 
+{nodeName: "Taio Cruz", group: 1}, 
+{nodeName: "La Toya Jackson", group: 1}, 
+{nodeName: "Den Harrow", group: 1}, 
+{nodeName: "Kim Wilde", group: 1}, 
+{nodeName: "Patti Austin", group: 1}, 
+{nodeName: "Darren Hayes", group: 1}, 
+{nodeName: "Natalie Gauci", group: 1}, 
+{nodeName: "Harry Belafonte", group: 1}, 
+{nodeName: "Cher (Künstlerin)", group: 1}, 
+{nodeName: "Bill Withers", group: 1}, 
+{nodeName: "Michael Sembello", group: 1}, 
+{nodeName: "Fancy", group: 1}, 
+{nodeName: "Silvy de Bie", group: 1}, 
+{nodeName: "Randy Jackson", group: 1}, 
+{nodeName: "Marc Terenzi", group: 1}, 
+{nodeName: "Tito Jackson", group: 1}, 
+{nodeName: "Rebbie Jackson", group: 1}, 
+{nodeName: "Pia Zadora", group: 1}, 
+{nodeName: "Lionel Richie", group: 1}, 
+{nodeName: "Madonna (Künstlerin)", group: 1}, 
+{nodeName: "Sarah Connor", group: 1}, 
+{nodeName: "Lisa Marie Presley", group: 1}, 
+{nodeName: "Nerina Pallot", group: 1}, 
+{nodeName: "Jarvis Cocker", group: 1}, 
+{nodeName: "Janet Jackson", group: 1}, 
+{nodeName: "Céline Dion", group: 1}, 
+{nodeName: "Tomomi Kahala", group: 1}, 
+{nodeName: "Kenny Loggins", group: 1}, 
+{nodeName: "Zeeteah", group: 1}, 
+{nodeName: "Bob Gaudio", group: 1}, 
+{nodeName: "DJ BoBo", group: 1}, 
+{nodeName: "Sharon Cuneta", group: 1}, 
+{nodeName: "Mai Kuraki", group: 1}, 
+{nodeName: "Nisha Kataria", group: 1}, 
+{nodeName: "Jermaine Jackson", group: 1}, 
+{nodeName: "Stevie Wonder", group: 1}, 
+{nodeName: "Rockwell (Musiker)", group: 1}, 
+{nodeName: "Fergie (Sängerin)", group: 1}, 
+{nodeName: "David Bowie", group: 1}
+]; 
+
+var newStringLinks = [ 
+{source: "Taio Cruz", target: "Michael Jackson", value: 2},
+{source: "La Toya Jackson", target: "Michael Jackson", value: 2},
+{source: "Den Harrow", target: "Michael Jackson", value: 2},
+{source: "Kim Wilde", target: "Michael Jackson", value: 2},
+{source: "Patti Austin", target: "Michael Jackson", value: 2},
+{source: "Darren Hayes", target: "Michael Jackson", value: 2},
+{source: "Natalie Gauci", target: "Michael Jackson", value: 2},
+{source: "Harry Belafonte", target: "Michael Jackson", value: 2},
+{source: "Cher (Künstlerin)", target: "Michael Jackson", value: 2},
+{source: "Bill Withers", target: "Michael Jackson", value: 2},
+{source: "Michael Sembello", target: "Michael Jackson", value: 2},
+{source: "Fancy", target: "Michael Jackson", value: 2},
+{source: "Silvy de Bie", target: "Michael Jackson", value: 2},
+{source: "Randy Jackson", target: "Michael Jackson", value: 2},
+{source: "Marc Terenzi", target: "Michael Jackson", value: 2},
+{source: "Tito Jackson", target: "Michael Jackson", value: 2},
+{source: "Rebbie Jackson", target: "Michael Jackson", value: 2},
+{source: "Pia Zadora", target: "Michael Jackson", value: 2},
+{source: "Lionel Richie", target: "Michael Jackson", value: 2},
+{source: "Madonna (Künstlerin)", target: "Michael Jackson", value: 2},
+{source: "Sarah Connor", target: "Michael Jackson", value: 2},
+{source: "Lisa Marie Presley", target: "Michael Jackson", value: 2},
+{source: "Nerina Pallot", target: "Michael Jackson", value: 2},
+{source: "Jarvis Cocker", target: "Michael Jackson", value: 2},
+{source: "Janet Jackson", target: "Michael Jackson", value: 2},
+{source: "Céline Dion", target: "Michael Jackson", value: 2},
+{source: "Tomomi Kahala", target: "Michael Jackson", value: 2},
+{source: "Kenny Loggins", target: "Michael Jackson", value: 2},
+{source: "Zeeteah", target: "Michael Jackson", value: 2},
+{source: "Bob Gaudio", target: "Michael Jackson", value: 2},
+{source: "DJ BoBo", target: "Michael Jackson", value: 2},
+{source: "Sharon Cuneta", target: "Michael Jackson", value: 2},
+{source: "Mai Kuraki", target: "Michael Jackson", value: 2},
+{source: "Nisha Kataria", target: "Michael Jackson", value: 2},
+{source: "Jermaine Jackson", target: "Michael Jackson", value: 2},
+{source: "Stevie Wonder", target: "Michael Jackson", value: 2},
+{source: "Rockwell (Musiker)", target: "Michael Jackson", value: 2},
+{source: "Fergie (Sängerin)", target: "Michael Jackson", value: 2},
+{source: "David Bowie", target: "Michael Jackson", value: 2}
+];
+
+var addList = [
+               {nodeName: "Prince"}, 
+               {nodeName: "Cher (Künstlerin)"},
+               {nodeName: "Nerina Pallot"},
+               {nodeName: "Giovanni Zarrella"},
+               {nodeName: "Albano Carrisi"},
+               {nodeName: "Jennifer Hudson"},
+               {nodeName: "Stéphanie von Monaco"},
+               {nodeName: "Diana Ross"},
+               {nodeName: "Mariah Carey"},
+               {nodeName: "Adam Lambert"}
+               ];
+               
+var delList = [
+               {nodeName: "Fergie (Sängerin)"}, 
+               {nodeName: "Sarah Connor"}
+               ];
+
+
+/**
+ * returns new collection, both collections concatenated
+ */
+function addNodes(existingNodes, newNodes) {
+	return existingNodes.concat(newNodes);
+}
+
+/**
+ * returns new collection, nodes that are in "toBeDeleted"
+ * are removed
+ */
+function removeNodes(existingNodes, toBeDeleted) {
+	var updatedList = [];
+	for(oldNode in existingNodes) {
+		if(findIndex(toBeDeleted, existingNodes[oldNode].nodeName) == -1) {
+			updatedList.push(existingNodes[oldNode]);
+		}
+	}
+	return updatedList;
+}
+
+/**
+ * returns the index of an element in the collection, -1 if not found
+ */
+function findIndex(collection, character) {
+    for(element in collection) {
+        if(collection[element].nodeName == character) {
+            return element;
+        }
+    }
+    return -1;
+}
+
+/**
+ * Transfers a name based link list into a index based one
+ */
+function transferToIndex(nodelist, linklist) {
+    for(element in linklist) {
+        linkobject = linklist[element];
+        linkobject.source = findIndex(nodelist, linkobject.source);
+        linkobject.target = findIndex(nodelist, linkobject.target);
+    }
+    return linklist
+}
+
+    
+$(function() {
+	 console.info(nodes);
+	 console.info(addList);
+	 var updatedList = addNodes(nodes, addList); 
+	 console.info(updatedList);
+	 updatedList = removeNodes(updatedList, delList)
+	 console.info(updatedList);
+	 console.info(transferToIndex(updatedList, newStringLinks));
+});
+ 
+</script> 
+
+</body> 
+</html> 
