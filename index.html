@@ -2,10 +2,9 @@
 <head> 
     <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=utf-8" />
     <title>Force-Directed Layout</title> 
-    <script type="text/javascript" src="/js/protovis-r3.2.js"></script> 
-    <script type="text/javascript" src="/js/miserables2011.js"></script> 
-    <script type="text/javascript" src="/js/miserables2010.js"></script> 
-    <script type="text/javascript" src="/js/miserables2009.js"></script> 
+    <script type="text/javascript" src="/js/protovis-r3.2.js"></script>  
+    <script type="text/javascript" src="/js/graphDelta.js"></script> 
+    <script type="text/javascript" src="/js/initialGraph.js"></script> 
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"></script> 
 	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js"></script>
     <link href="/css/base.css" media="all" rel="stylesheet" type="text/css"/>
@@ -52,8 +51,8 @@ function transform() {
 
 $('body').data('currentZoomLevel', 1);
 
-var miserables = miserables2009;
-var nodesInCurrentFrame, linksInCurrentFrame;
+var nodesInCurrentFrame = initialGraph.nodes; 
+var linksInCurrentFrame = initialGraph.links;
  
 var w = document.body.clientWidth,
     h = document.body.clientHeight,
@@ -70,8 +69,8 @@ var vis = new pv.Panel()
 
 
 var force = vis.add(pv.Layout.Force)
-    .nodes(miserables.nodes)
-    .links(miserables.links)
+    .nodes(initialGraph.nodes)
+    .links(initialGraph.links)
     .springConstant(0.05)
     .chargeConstant(-60);
  
@@ -113,7 +112,6 @@ force.label.add(pv.Label)
             if (zoomLevel >= 500) {
                 return node.nodeName;
             }
-
             return "";
         });
  
@@ -121,43 +119,15 @@ vis.render();
 
 
 function addNode(newFrameIndex){
+	var updatedList = addNodes(nodesInCurrentFrame, frameInformation[newFrameIndex].add); 
+    updatedList = removeNodes(updatedList, frameInformation[newFrameIndex].del);
+    var updatedLinks = transferToIndex(updatedList, frameInformation[newFrameIndex].links)
 
-
-if(newFrameIndex == 1) {
-	var updatedList = addNodes(miserables.nodes, addList); 
-    //updatedList = removeNodes(updatedList, delList);
-    var updatedLinks = transferToIndex(updatedList, newStringLinks)
-
-    console.info("original nodes: ", miserables.nodes);
-    console.info("original links: ", miserables.links);
-    console.info("updated nodes: ", updatedList);
-    console.info("updated links: ", updatedLinks);
-
-nodesInCurrentFrame = updatedList;
-linksInCurrentFrame = updatedLinks;
+	nodesInCurrentFrame = updatedList;
+	linksInCurrentFrame = updatedLinks;
     force.links(updatedLinks);
-	//console.info("updated links AFTER: ", updatedLinks);
     force.nodes(updatedList);
     force.reset();
-
-} else if (newFrameIndex == 2) {
-	console.info("original nodes2: ", nodesInCurrentFrame);
-    console.info("original links2: ", linksInCurrentFrame);
-	var updatedList = addNodes(nodesInCurrentFrame, addList2); 
-    //updatedList = removeNodes(updatedList, delList);
-    var updatedLinks = transferToIndex(updatedList, newStringLinks2)
-
-    //console.info("original nodes: ", miserables.nodes);
-    //console.info("original links: ", miserables.links);
-    console.info("updated nodes: ", updatedList);
-    console.info("updated links: ", updatedLinks);
-
-    force.links(updatedLinks);
-	console.info("updated links AFTER: ", updatedLinks);
-    force.nodes(updatedList);
-    force.reset();	
-}
-    
 }
 
 /**
@@ -214,9 +184,6 @@ function transferToIndex(nodelist, linklist) {
     vis.render();
 }*/
 
-//setTimeout(addNode, 1500);
-//setTimeout(addNode2, 30000);
-//setTimeout(remNode, 10000);
 
 
     </script> 
