@@ -10,3 +10,19 @@ body {
     background: white;
 }
 
+#slider { 
+	position: absolute;
+    top: 100px;
+    left: 200px;
+	margin: 10px; 
+	width: 100px;
+}
+
+#play { 
+	position: absolute;
+    top: 150px;
+    left: 200px;
+	margin: 10px; 
+	width: 100px;
+}
+

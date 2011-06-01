@@ -3,12 +3,45 @@
     <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=utf-8" />
     <title>Force-Directed Layout</title> 
     <script type="text/javascript" src="/js/protovis-r3.2.js"></script> 
-    <script type="text/javascript" src="/js/miserables.js"></script> 
+    <script type="text/javascript" src="/js/miserables2011.js"></script> 
+    <script type="text/javascript" src="/js/miserables2010.js"></script> 
+    <script type="text/javascript" src="/js/miserables2009.js"></script> 
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"></script> 
+	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js"></script>
     <link href="/css/base.css" media="all" rel="stylesheet" type="text/css"/>
+<link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css" rel="stylesheet" type="text/css"/>
+
+	<script type="text/javascript"> 
+	$(document).ready(function() {
+	   $("#slider").slider({ 
+		max: 2, 
+		change: function(event, ui) {
+			var newFrameIndex = ui.value;
+			addNode(newFrameIndex);
+			$("#frameInfo").text("Frame" + newFrameIndex);
+		}
+		});
+		
+		$( "button, input:submit, a", ".demo" ).button();
+		
+		$("#play").click(function() {
+			setTimeout(slide1, 500);
+			setTimeout(slide2, 2500);
+		});
+	 });
+	
+	function slide1() {
+		$("#slider").slider("option", "value", 1);
+	}
+	function slide2() {
+		$("#slider").slider("option", "value", 2);
+	}
+	</script>
 </head> 
 
 <body> 
+	
+
 <script type="text/javascript+protovis"> 
 
 function transform() {
@@ -18,11 +51,13 @@ function transform() {
 }
 
 $('body').data('currentZoomLevel', 1);
- 
+
+var miserables = miserables2009;
+var nodesInCurrentFrame, linksInCurrentFrame;
  
 var w = document.body.clientWidth,
     h = document.body.clientHeight,
-    colors = pv.Colors.category19();
+    colors = pv.Colors.category10();
  
 var vis = new pv.Panel()
     .width(w)
@@ -85,35 +120,110 @@ force.label.add(pv.Label)
 vis.render();
 
 
-function addNode(){
-    miserables.nodes.push({
-        "nodeName":"New monkey",
-        "group":3
-    });
-    miserables.links.push({
-        "source":0,
-        "target":105,
-        "value":20
-    });
-    force.links(miserables.links);
-    force.nodes(miserables.nodes);
+function addNode(newFrameIndex){
+
+
+if(newFrameIndex == 1) {
+	var updatedList = addNodes(miserables.nodes, addList); 
+    //updatedList = removeNodes(updatedList, delList);
+    var updatedLinks = transferToIndex(updatedList, newStringLinks)
+
+    console.info("original nodes: ", miserables.nodes);
+    console.info("original links: ", miserables.links);
+    console.info("updated nodes: ", updatedList);
+    console.info("updated links: ", updatedLinks);
+
+nodesInCurrentFrame = updatedList;
+linksInCurrentFrame = updatedLinks;
+    force.links(updatedLinks);
+	//console.info("updated links AFTER: ", updatedLinks);
+    force.nodes(updatedList);
     force.reset();
+
+} else if (newFrameIndex == 2) {
+	console.info("original nodes2: ", nodesInCurrentFrame);
+    console.info("original links2: ", linksInCurrentFrame);
+	var updatedList = addNodes(nodesInCurrentFrame, addList2); 
+    //updatedList = removeNodes(updatedList, delList);
+    var updatedLinks = transferToIndex(updatedList, newStringLinks2)
+
+    //console.info("original nodes: ", miserables.nodes);
+    //console.info("original links: ", miserables.links);
+    console.info("updated nodes: ", updatedList);
+    console.info("updated links: ", updatedLinks);
+
+    force.links(updatedLinks);
+	console.info("updated links AFTER: ", updatedLinks);
+    force.nodes(updatedList);
+    force.reset();	
+}
+    
 }
 
-function remNode(){
+/**
+ * returns new collection, both collections concatenated
+ */
+function addNodes(existingNodes, newNodes) {
+    return existingNodes.concat(newNodes);
+}
+
+/**
+ * returns new collection, nodes that are in "toBeDeleted"
+ * are removed
+ */
+function removeNodes(existingNodes, toBeDeleted) {
+    var updatedList = [];
+    for(oldNode in existingNodes) {
+        if(findIndex(toBeDeleted, existingNodes[oldNode].nodeName) == -1) {
+            updatedList.push(existingNodes[oldNode]);
+        }
+    }
+    return updatedList;
+}
+
+/**
+ * returns the index of an element in the collection, -1 if not found
+ */
+function findIndex(collection, character) {
+    for(element in collection) {
+        if(collection[element].nodeName == character) {
+            return parseInt(element);
+        }
+    }
+    return -1;
+}
+
+/**
+ * Transfers a name based link list into a index based one
+ */
+function transferToIndex(nodelist, linklist) {
+    for(element in linklist) {
+        linkobject = linklist[element];
+        linkobject.source = findIndex(nodelist, linkobject.source);
+        linkobject.target = findIndex(nodelist, linkobject.target);
+    }
+    return linklist
+}
+
+/*function remNode(){
     miserables.nodes.splice(9, 1);
     miserables.links.splice(8, 1);
     force.links(mylinks);
     force.nodes(mynodes);
     force.reset();
     vis.render();
-}
+}*/
 
-setTimeout(addNode, 15000);
+//setTimeout(addNode, 1500);
+//setTimeout(addNode2, 30000);
 //setTimeout(remNode, 10000);
- 
+
+
     </script> 
 
-    <div id="frameInfo">Frame1</div>
+	<div id="slider">&nbsp;</div>
+	<button id="play">PLAY</button>
+    
+	<div id="frameInfo">Frame0</div>
   </body> 
 </html> 
