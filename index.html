@@ -8,6 +8,7 @@
 	<script type="text/javascript" src="/js/nodeHelpers.js"></script> 
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"></script> 
 	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js"></script>
+	
     <link href="/css/base.css" media="all" rel="stylesheet" type="text/css"/>
 	<link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css" rel="stylesheet" type="text/css"/>
 
@@ -41,89 +42,90 @@ function slide2() {
 </head> 
 
 <body> 
-	
+	<script type="text/javascript"> 
+	function transform() {
+	    var t = this.transform().invert();
+	    $('body').data('currentZoomLevel', t.x);
+	    vis.render();
+	}
 
-<script type="text/javascript+protovis"> 
+	$('body').data('currentZoomLevel', 1);
 
-function transform() {
-    var t = this.transform().invert();
-    $('body').data('currentZoomLevel', t.x);
-    vis.render();
-}
+	var nodesInCurrentFrame = initialGraph.nodes; 
+	var linksInCurrentFrame = initialGraph.links;
 
-$('body').data('currentZoomLevel', 1);
+	var w = document.body.clientWidth,
+	    h = document.body.clientHeight,
+	    colors = pv.Colors.category10();
 
-var nodesInCurrentFrame = initialGraph.nodes; 
-var linksInCurrentFrame = initialGraph.links;
- 
-var w = document.body.clientWidth,
-    h = document.body.clientHeight,
-    colors = pv.Colors.category10();
- 
-var vis = new pv.Panel()
-    .width(w)
-    .height(h)
-    .fillStyle("white")
-    .event("mousedown", pv.Behavior.pan())
-    .event("mousewheel", pv.Behavior.zoom(1))
-    .event("pan", transform)
-    .event("zoom", transform);
+	var vis = new pv.Panel()
+	    .width(w)
+	    .height(h)
+	    .fillStyle("white")
+	    .event("mousedown", pv.Behavior.pan())
+	    .event("mousewheel", pv.Behavior.zoom(1))
+	    .event("pan", transform)
+	    .event("zoom", transform);
 
-var force = vis.add(pv.Layout.Force)
-    .nodes(initialGraph.nodes)
-    .links(initialGraph.links)
-    .springConstant(0.05)
-    .chargeConstant(-60);
- 
-force.link.add(pv.Line);
- 
-force.node.add(pv.Dot)
-    .size(function(d) (d.linkDegree + 4) * Math.pow(this.scale, -1.5))
-    .fillStyle(function(d) d.fix ? "brown" : colors(d.group))
-    .strokeStyle(function() this.fillStyle().darker())
-    .lineWidth(1)
-    .title(function(d) d.nodeName)
-    .event("mousedown", pv.Behavior.drag())
-    .event("drag", force);
+	var force = vis.add(pv.Layout.Force)
+	    .nodes(initialGraph.nodes)
+	    .links(initialGraph.links)
+	    .springConstant(0.05)
+	    .chargeConstant(-60);
 
-force.label.add(pv.Label)
-    .bottom(0)
-    .font(function(node) {
-            var fontSize = 12;
-            if (node.linkDegree * 0.5 > 20){
-                fontSize = 20;
-            }
-            else if (node.linkDegree * 0.5 < 12) {
-                fontSize = 12;
-            } else {
-                fontSize = node.linkDegree * 0.5;
-            }
+	force.link.add(pv.Line);
 
-            return fontSize + "px sans-serif";
-        })
-    .text(function(node) {
-            var zoomLevel = $('body').data('currentZoomLevel');
-            var nodeDegree = node.linkDegree;
-            if (zoomLevel < -250) {
-                return "";
-            }
-            if (zoomLevel < 500 && nodeDegree > 50) {
-                return node.nodeName;
-            }
-            if (zoomLevel >= 500) {
-                return node.nodeName;
-            }
-            return "";
-        });
- 
-vis.render();
+	force.node.add(pv.Dot)
+	    .size(function(d) {
+			return (d.linkDegree + 4) * Math.pow(this.scale, -1.5);
+		})
+	    .fillStyle(function(d) {
+			return d.fix ? "brown" : colors(d.group); 
+		})
+	    .strokeStyle(function() {
+			return this.fillStyle().darker();
+		})
+	    .lineWidth(1)
+	    .title(function(d) { 
+			return d.nodeName; 
+		})
+	    .event("mousedown", pv.Behavior.drag())
+	    .event("drag", force);
 
+	force.label.add(pv.Label)
+	    .bottom(0)
+	    .font(function(node) {
+	            var fontSize = 12;
+	            if (node.linkDegree * 0.5 > 20){
+	                fontSize = 20;
+	            }
+	            else if (node.linkDegree * 0.5 < 12) {
+	                fontSize = 12;
+	            } else {
+	                fontSize = node.linkDegree * 0.5;
+	            }
 
+	            return fontSize + "px sans-serif";
+	        })
+	    .text(function(node) {
+	            var zoomLevel = $('body').data('currentZoomLevel');
+	            var nodeDegree = node.linkDegree;
+	            if (zoomLevel < -250) {
+	                return "";
+	            }
+	            if (zoomLevel < 500 && nodeDegree > 50) {
+	                return node.nodeName;
+	            }
+	            if (zoomLevel >= 500) {
+	                return node.nodeName;
+	            }
+	            return "";
+	        });
+
+	vis.render();
 
 
-
-
-    </script> 
+</script>
 
 	<div id="slider">&nbsp;</div>
 	<button id="play">PLAY</button>

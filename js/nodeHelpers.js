@@ -43,6 +43,9 @@ function transferToIndex(nodelist, linklist) {
     return linklist
 }
 
+/**
+ * Updates the graph according to the frame index
+ */
 function addNode(newFrameIndex){
 	var updatedList = addNodes(nodesInCurrentFrame, frameInformation[newFrameIndex].add); 
     updatedList = removeNodes(updatedList, frameInformation[newFrameIndex].del);
