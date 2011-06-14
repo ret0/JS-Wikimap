@@ -25,17 +25,16 @@ $(document).ready(function() {
 	$( "button, input:submit, a", ".demo" ).button();
 	
 	$("#play").click(function() {
-		setTimeout(slide1, 500);
-		setTimeout(slide2, 2500);
+		var delta = 1200;
+		var index;
+		for(index = 0; index <=5; index++) {
+			setTimeout(slideChange(index), delta * index);
+		}
 	});
  });
 
-function slide1() {
-	$("#slider").slider("option", "value", 1);
-}
-
-function slide2() {
-	$("#slider").slider("option", "value", 2);
+function slideChange(index) {
+	$("#slider").slider("option", "value", index);
 }
 </script>
 </head> 
