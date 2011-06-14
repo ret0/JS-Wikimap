@@ -53,7 +53,8 @@ function addNode(newFrameIndex){
 
 	nodesInCurrentFrame = updatedList;
 	linksInCurrentFrame = updatedLinks;
-    force.links(updatedLinks);
     force.nodes(updatedList);
+	force.links(updatedLinks);
     force.reset();
+	vis.render();
 }
